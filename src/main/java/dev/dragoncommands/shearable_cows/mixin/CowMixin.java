@@ -1,5 +1,6 @@
 package dev.dragoncommands.shearable_cows.mixin;
 
+import dev.dragoncommands.shearable_cows.AnimalAddon;
 import dev.dragoncommands.shearable_cows.ShearedEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -8,31 +9,27 @@ import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.passive.*;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CowEntity.class)
-public abstract class CowMixin extends AnimalEntity implements Shearable, ShearedEntity {
+public abstract class CowMixin extends AnimalEntity implements Shearable, ShearedEntity, AnimalAddon {
 
 	protected CowMixin(EntityType<? extends AnimalEntity> entityType, World world) {
 		super(entityType, world);
@@ -47,16 +44,12 @@ public abstract class CowMixin extends AnimalEntity implements Shearable, Sheare
 	}
 
 	@Override
-	public void writeCustomDataToNbt(NbtCompound nbt) {
-		super.writeCustomDataToNbt(nbt);
-
+	public void applyAdditionalNBT(NbtCompound nbt) {
 		nbt.putBoolean("shorn", isShorn());
 	}
 
 	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
-
+	public void readAdditionalNBT(NbtCompound nbt) {
 		this.dataTracker.set(SHORN, nbt.getBoolean("shorn"));
 	}
 
@@ -105,7 +98,14 @@ public abstract class CowMixin extends AnimalEntity implements Shearable, Sheare
 		}
 
 		this.dataTracker.set(SHORN, true);
+	}
 
+	@Override
+	protected Identifier getLootTableId() {
+		if(isShorn()) {
+			return new Identifier("shearable-cows","entities/skinless_cow");
+		}
+		return super.getLootTableId();
 	}
 
 	@Override
