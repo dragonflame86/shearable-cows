@@ -3,9 +3,9 @@
 	"id": "shearable-cows",
 	"version": "${version}",
 	"name": "Shearable Cows",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "This mod makes cows shearable.",
 	"authors": [
-		"Me!"
+		"dragoncommands"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"dev.dragoncommands.shearable_cows.ExampleMod"
+			"dev.dragoncommands.shearable_cows.ShearableCowsMain"
 		],
 		"client": [
-			"dev.dragoncommands.shearable_cows.ExampleModClient"
+			"dev.dragoncommands.shearable_cows.ShearableCowsMainClient"
 		]
 	},
 	"mixins": [
